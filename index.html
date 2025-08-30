@@ -137,11 +137,48 @@
       z-index: 0;
     }
 
+    /* Bildirim stili */
+    #musicPrompt {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-family: Arial, sans-serif;
+      z-index: 20;
+      user-select: none;
+    }
+    #musicPrompt button {
+      margin-left: 15px;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #ff4655;
+      color: white;
+      font-weight: bold;
+    }
+    #musicPrompt button#noBtn {
+      background: gray;
+    }
   </style>
 </head>
 <body>
 
   <h1>Lareyi çok seviyorum :)</h1>
+
+  <!-- Bildirim kutusu -->
+  <div id="musicPrompt">
+    Sevgilinizin sizin için seçtiği şarkıyı dinlemek ister misiniz?
+    <button id="playBtn">Evet</button>
+    <button id="noBtn">Hayır</button>
+  </div>
+
+  <!-- YouTube player div (gizli değil, küçültüldü) -->
+  <div id="youtube-player" style="width:100px; height:100px; position: fixed; bottom: 10px; right: 10px; z-index: 30;"></div>
 
   <script>
     const heartCount = 20;
@@ -152,16 +189,13 @@
       return Math.random() * (max - min) + min;
     }
 
-    // Hareket için hız ve yön hesapla
     function createMovement(elem, maxSpeed=0.1) {
       let posX = parseFloat(elem.style.left);
       let posY = parseFloat(elem.style.top);
 
-      // px değil vw/vh kullanıldığı için konumu % olarak alıyoruz
       if (isNaN(posX)) posX = randomBetween(0, 100);
       if (isNaN(posY)) posY = randomBetween(0, 100);
 
-      // Hızlar (vw/vh cinsinden)
       let speedX = randomBetween(-maxSpeed, maxSpeed);
       let speedY = randomBetween(-maxSpeed, maxSpeed);
 
@@ -169,7 +203,6 @@
         posX += speedX;
         posY += speedY;
 
-        // Sınırlar: 0-100 arasında kalacak
         if (posX < 0) { posX = 0; speedX = -speedX; }
         if (posX > 100) { posX = 100; speedX = -speedX; }
         if (posY < 0) { posY = 0; speedY = -speedY; }
@@ -204,7 +237,7 @@
       createMovement(heart, 0.1);
     }
 
-    // Yıldızları oluştur (hareket etmesin sadece pulse)
+    // Yıldızları oluştur (pulse animasyonlu)
     for(let i = 0; i < starCount; i++) {
       const star = document.createElement('div');
       star.classList.add('star');
@@ -236,13 +269,60 @@
       particle.style.left = randomBetween(0, 100) + 'vw';
       particle.style.top = randomBetween(100, 120) + 'vh';
 
-      const duration = randomBetween(15, 25);
-      const delay = Math.random() * 20;
-      particle.style.animation = `particleMove ${duration}s linear infinite`;
-      particle.style.animationDelay = delay + 's';
+      particle.style.animation = `particleMove ${randomBetween(15, 25)}s linear infinite`;
+      particle.style.animationDelay = (Math.random() * 20) + 's';
 
       document.body.appendChild(particle);
     }
+
+    // YouTube player için değişken
+    let player;
+
+    // YouTube API hazır olduğunda çalışacak fonksiyon
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('youtube-player', {
+        height: '100',
+        width: '100',
+        videoId: 'qol0bBbcm44',
+        events: {
+          'onReady': onPlayerReady
+        },
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          modestbranding: 1,
+          rel: 0,
+          showinfo: 0
+        }
+      });
+    }
+
+    function onPlayerReady(event) {
+      console.log("YouTube player hazır.");
+    }
+
+    // Butonlar ve eventler
+    const playBtn = document.getElementById('playBtn');
+    const noBtn = document.getElementById('noBtn');
+    const promptBox = document.getElementById('musicPrompt');
+
+    playBtn.addEventListener('click', () => {
+      promptBox.style.display = 'none';
+      if (player && player.playVideo) {
+        player.playVideo();
+      }
+    });
+
+    noBtn.addEventListener('click', () => {
+      promptBox.style.display = 'none';
+      // Şarkı çalmaz, sadece bildirim kapanır
+    });
+
+    // YouTube iframe API scriptini sayfaya ekle
+    let tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    let firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   </script>
 
 </body>
