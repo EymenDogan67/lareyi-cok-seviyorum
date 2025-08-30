@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lareyi Çok Seviyorum :)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ff77a9, #a04fff, #ff4655);
+      background-size: 600% 600%;
+      animation: bgAnimation 25s ease infinite;
+      font-family: 'Pacifico', cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+      user-select: none;
+      position: relative;
+    }
+
+    @keyframes bgAnimation {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    h1 {
+      font-size: 5em;
+      text-shadow:
+        0 0 10px #ff77a9,
+        0 0 20px #a04fff,
+        0 0 40px #ff4655;
+      animation: glow 3s ease-in-out infinite alternate;
+      margin: 0 20px;
+      z-index: 10;
+      position: relative;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow:
+          0 0 15px #ff77a9,
+          0 0 30px #a04fff,
+          0 0 50px #ff4655;
+      }
+      to {
+        text-shadow:
+          0 0 30px #ff77a9,
+          0 0 60px #a04fff,
+          0 0 100px #ff4655;
+      }
+    }
+
+    /* Kalp şekli */
+    .heart {
+      position: absolute;
+      background-color: #ff4c7c;
+      transform: rotate(-45deg);
+      border-radius: 15px 15px 0 0;
+      animation: heartPulse 3s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 5px #ff4c7c);
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      background-color: #ff4c7c;
+      border-radius: 50%;
+    }
+    .heart::before {
+      top: -50%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .heart::after {
+      top: 0;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+    }
+
+    @keyframes heartPulse {
+      0%, 100% {
+        transform: rotate(-45deg) scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: rotate(-45deg) scale(1.4);
+        opacity: 1;
+      }
+    }
+
+    /* Yıldız şekli */
+    .star {
+      position: absolute;
+      background: radial-gradient(circle at center, #fff, transparent 70%);
+      clip-path: polygon(
+        50% 0%, 61% 35%, 98% 35%, 68% 57%,
+        79% 91%, 50% 70%, 21% 91%, 32% 57%,
+        2% 35%, 39% 35%
+      );
+      animation: starPulse 3s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 6px #fff);
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes starPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.5);
+        opacity: 1;
+      }
+    }
+
+    /* Partiküller */
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      opacity: 0.5;
+      pointer-events: none;
+      filter: drop-shadow(0 0 3px rgba(255,255,255,0.5));
+      z-index: 0;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Lareyi çok seviyorum :)</h1>
+
+  <script>
+    const heartCount = 20;
+    const starCount = 20;
+    const particleCount = 40;
+
+    function randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    // Hareket için hız ve yön hesapla
+    function createMovement(elem, maxSpeed=0.1) {
+      let posX = parseFloat(elem.style.left);
+      let posY = parseFloat(elem.style.top);
+
+      // px değil vw/vh kullanıldığı için konumu % olarak alıyoruz
+      if (isNaN(posX)) posX = randomBetween(0, 100);
+      if (isNaN(posY)) posY = randomBetween(0, 100);
+
+      // Hızlar (vw/vh cinsinden)
+      let speedX = randomBetween(-maxSpeed, maxSpeed);
+      let speedY = randomBetween(-maxSpeed, maxSpeed);
+
+      function move() {
+        posX += speedX;
+        posY += speedY;
+
+        // Sınırlar: 0-100 arasında kalacak
+        if (posX < 0) { posX = 0; speedX = -speedX; }
+        if (posX > 100) { posX = 100; speedX = -speedX; }
+        if (posY < 0) { posY = 0; speedY = -speedY; }
+        if (posY > 100) { posY = 100; speedY = -speedY; }
+
+        elem.style.left = posX + 'vw';
+        elem.style.top = posY + 'vh';
+
+        requestAnimationFrame(move);
+      }
+      move();
+    }
+
+    // Kalpleri oluştur ve hareket ettir
+    for(let i = 0; i < heartCount; i++) {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+
+      const size = randomBetween(10, 30);
+      heart.style.width = size + 'px';
+      heart.style.height = size + 'px';
+
+      heart.style.left = randomBetween(0, 100) + 'vw';
+      heart.style.top = randomBetween(0, 100) + 'vh';
+
+      const duration = randomBetween(2, 4);
+      const delay = Math.random() * 4;
+      heart.style.animationDuration = duration + 's';
+      heart.style.animationDelay = delay + 's';
+
+      document.body.appendChild(heart);
+      createMovement(heart, 0.1);
+    }
+
+    // Yıldızları oluştur (hareket etmesin sadece pulse)
+    for(let i = 0; i < starCount; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+
+      const size = randomBetween(8, 20);
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+
+      star.style.left = randomBetween(0, 100) + 'vw';
+      star.style.top = randomBetween(0, 100) + 'vh';
+
+      const duration = randomBetween(2, 4);
+      const delay = Math.random() * 4;
+      star.style.animationDuration = duration + 's';
+      star.style.animationDelay = delay + 's';
+
+      document.body.appendChild(star);
+    }
+
+    // Partikülleri oluştur ve yukarı hareket ettir
+    for(let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+
+      const size = randomBetween(3, 7);
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+
+      particle.style.left = randomBetween(0, 100) + 'vw';
+      particle.style.top = randomBetween(100, 120) + 'vh';
+
+      const duration = randomBetween(15, 25);
+      const delay = Math.random() * 20;
+      particle.style.animation = `particleMove ${duration}s linear infinite`;
+      particle.style.animationDelay = delay + 's';
+
+      document.body.appendChild(particle);
+    }
+  </script>
+
+</body>
+</html>
